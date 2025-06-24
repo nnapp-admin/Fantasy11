@@ -11,6 +11,9 @@ import './index.css';
 // Register Chart.js components and zoom plugin
 ChartJS.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, Title, Tooltip, Legend, ArcElement, zoomPlugin);
 
+// Base API URL from environment variable
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 // Chart.js custom theme with zoom for financial trends
 const chartOptions = {
   plugins: {
@@ -236,7 +239,7 @@ function App() {
     let isMounted = true;
     setLoading(true);
     axios
-      .get('http://localhost:5000/api/users')
+      .get(`${API_URL}/api/users`)
       .then(async (res) => {
         if (isMounted) {
           const usersData = res.data;
@@ -255,7 +258,7 @@ function App() {
             // Fetch predictions for all users using the new endpoint
             const predictionsPromises = usersData.map((user) =>
               axios
-                .post(`http://localhost:5000/api/predict/${user.userId}`)
+                .post(`${API_URL}/api/predict/${user.userId}`)
                 .then((res) => ({ userId: user.userId, predictions: res.data }))
                 .catch(() => ({ userId: user.userId, predictions: {} }))
             );
@@ -276,7 +279,7 @@ function App() {
       });
 
     axios
-      .get('http://localhost:5000/api/team-popularity')
+      .get(`${API_URL}/api/team-popularity`)
       .then((res) => {
         if (isMounted) setTeamPopularity(res.data);
       })
@@ -305,7 +308,7 @@ function App() {
     };
 
     axios
-      .get(`http://localhost:5000/api/user/${userId}/journey`, { params })
+      .get(`${API_URL}/api/user/${userId}/journey`, { params })
       .then((res) => {
         if (isMounted) {
           const formattedJourney = res.data.map((j) => ({
@@ -320,7 +323,7 @@ function App() {
       });
 
     axios
-      .get('http://localhost:5000/api/insights', { params: { userId } })
+      .get(`${API_URL}/api/insights`, { params: { userId } })
       .then((res) => {
         if (isMounted) {
           const user = users.find((u) => u.userId === userId);
@@ -358,7 +361,7 @@ function App() {
       });
 
     axios
-      .get(`http://localhost:5000/api/user/${userId}/financial-trends`)
+      .get(`${API_URL}/api/user/${userId}/financial-trends`)
       .then((res) => {
         if (isMounted) setFinancialTrends(res.data);
       })
@@ -369,7 +372,7 @@ function App() {
     // Update predictions based on selected user
     const selectedUserData = users.find((u) => u.userId === userId) || {};
     axios
-      .post(`http://localhost:5000/api/predict/${userId}`)
+      .post(`${API_URL}/api/predict/${userId}`)
       .then((res) => setPredictions(res.data))
       .catch(() => setError('Failed to fetch predictions'));
 
@@ -382,9 +385,8 @@ function App() {
     const validatedScore = Math.max(0, Math.min(1, parseFloat(score) || 0.7));
     const validatedGameTime = Math.max(0, parseFloat(gameTime) || 120);
     const validatedSpend = Math.max(0, parseFloat(spend) || 50);
-    // Note: The backend now handles prediction directly via userId, so this function is adjusted
     axios
-      .post(`http://localhost:5000/api/predict/${userId}`)
+      .post(`${API_URL}/api/predict/${userId}`)
       .then((res) => setPredictions(res.data))
       .catch(() => setError('Failed to fetch predictions'));
   };
