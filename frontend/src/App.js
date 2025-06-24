@@ -547,7 +547,7 @@ function App() {
               className="px-4 py-2 rounded-lg bg-cyan-500 text-white font-semibold hover:bg-cyan-600 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500"
               aria-label={showDocumentation ? 'Hide documentation' : 'Show documentation'}
             >
-              {showDocumentation ? 'Back' : 'ℹ️Info'}
+              {showDocumentation ? '🔙' : 'ℹ️'}
             </button>
           </div>
           {showDocumentation && (
