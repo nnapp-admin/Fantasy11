@@ -538,14 +538,14 @@ function App() {
           <div className="flex flex-row items-center justify-between px-4">
             <div className="flex flex-row items-center space-x-4">
               <img src={visionLogo} alt="Vision11 Logo" className="h-auto" style={{ width: '100px' }} />
-              <h1 className="text-2xl sm:text-4xl md:text-4xl font-bold text-red-500">Analytics Dashboard</h1>
+              <h1 className="text-2xl sm:text-4xl md:text-4xl font-bold text-red-500">Analytics</h1>
             </div>
             <button
               onClick={() => setShowDocumentation(!showDocumentation)}
               className="px-4 py-2 rounded-lg bg-cyan-500 text-white font-semibold hover:bg-cyan-600 transition-all focus:outline-none focus:ring-2 focus:ring-cyan-500"
               aria-label={showDocumentation ? 'Hide documentation' : 'Show documentation'}
             >
-              {showDocumentation ? 'Back' : 'How to Use'}
+              {showDocumentation ? 'Back' : 'ℹ️Info'}
             </button>
           </div>
           {showDocumentation && (

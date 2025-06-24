@@ -4,7 +4,29 @@ const winston = require('winston');
 const app = express();
 const { users } = require('./data.js');
 
-app.use(cors());
+// Define allowed origins
+const allowedOrigins = [
+  'https://fantasy11-3vnl.onrender.com', // Frontend production URL
+  'http://localhost:3000' // Frontend local development URL
+];
+
+// CORS options
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Explicitly allow methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow common headers
+  credentials: true, // Support cookies or auth headers if needed
+  optionsSuccessStatus: 200 // Ensure preflight requests succeed
+};
+
+// Apply CORS with options
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Logger configuration
@@ -674,7 +696,7 @@ app.get('/api/model-evaluation', (req, res) => {
         f1Score: evaluationMetrics.spike.std.f1Score.toFixed(2),
         rocAuc: evaluationMetrics.spike.std.auc.toFixed(3),
       }
-    },
+    }
   });
 });
 
@@ -754,8 +776,7 @@ app.get('/api/user/:id/financial-trends', (req, res) => {
     const withdrawalEvents = user.journey.filter((j) => j.action === 'withdrawal_request');
     const avgDeposit = depositEvents.length ? depositEvents.reduce((sum, j) => sum + j.amount, 0) / depositEvents.length : 0;
     const avgWithdrawal = withdrawalEvents.length
-      ? withdrawalEvents.reduce((sum, j) => sum + j.amount, 0) / withdrawalEvents.length
-      : 0;
+      ? withdrawalEvents.reduce((sum, j) => sum + j.amount, 0) / withdrawalEvents.length : 0;
 
     const totalBettingSpend = user.bettingHistory.reduce((sum, b) => sum + b.amount, 0);
     const bettingSpendRatio = user.balance + totalBettingSpend > 0 ? totalBettingSpend / (totalBettingSpend + user.balance) : 0;
@@ -788,7 +809,7 @@ app.get('/api/user/:id/financial-trends', (req, res) => {
         'en-IN',
         { timeZone: 'Asia/Kolkata' }
       )}.`,
-      `Total withdrawals of ₹${user.totalWithdrawals.toFixed(2)} with an average of ₹${avgWithdrawal.toFixed(2)} per withdrawal.`,
+      `Total withdrawals of ₹${user.totalWithdrawals.toFixed(2)} with an average of ₹${avgWithdrawal.toFixed(2)} per withdrawal`,
       `Betting spend of ₹${totalBettingSpend.toFixed(2)} is ${(bettingSpendRatio * 100).toFixed(1)}% of total funds.`,
       `Net contribution of ₹${(user.totalDeposits - user.totalWithdrawals).toFixed(2)} suggests ${
         user.totalDeposits > user.totalWithdrawals ? 'active participation' : 'potential withdrawal risk'
